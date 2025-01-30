@@ -1,0 +1,47 @@
+/* Sidebar container styling */
+.commentRank-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 450px;
+    height: 100vh;
+    background-color: white;
+    border-left: 2px solid #ddd;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+}
+
+/* Sidebar content styling */
+.commentRank-sidebar h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.commentRank-sidebar p {
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+}
+
+/* List of reviews */
+.commentRank-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.commentRank-sidebar li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.commentRank-sidebar li:last-child {
+    border-bottom: none;
+}
