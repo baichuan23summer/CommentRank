@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "CommentRank",
     "version": "1.0",
-    "description": "A Chrome extension that analyzes and ranks Amazon product reviews based on multiple parameters.",
+    "description": "Ranks Amazon product reviews with an interactive sidebar.",
     "permissions": [
       "storage",
       "activeTab",
@@ -22,17 +22,11 @@
       }
     ],
     "action": {
-      "default_popup": "popup.html",
       "default_icon": {
-        "16": "imeges/icons/icon16.png",
-        "48": "imeges/icons/icon48.png",
-        "128": "imeges/icons/icon128.png"
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
       }
-    },
-    "icons": {
-      "16": "imeges/icons/icon16.png",
-      "48": "imeges/icons/icon48.png",
-      "128": "imeges/icons/icon128.png"
     }
   }
   
