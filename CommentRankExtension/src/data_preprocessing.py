@@ -32,7 +32,7 @@ from nltk.corpus import stopwords
 # 如果是首次使用，需要额外下载 stopwords 和 punkt：
 # nltk.download('punkt')
 # nltk.download('stopwords')
-nltk.download('punkt_tab')
+
 stop_words = set(stopwords.words('english'))
 
 def preprocess_text(text):
