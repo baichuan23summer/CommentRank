@@ -1,7 +1,7 @@
 import pandas as pd
 
 # 读取 CSV 文件
-df = pd.read_csv('CommentRankExtension/data/amazon_reviews.csv')
+df = pd.read_csv('./data/amazon_reviews.csv')
 
 # 假设有三列分别表示：评论内容(review_text)、被标记“有用”的次数(helpful_count)，被标记“没用”的次数(not_helpful_count)。
 # 如果你的文件中对应的列名不同，需在此处进行相应修改：
@@ -30,8 +30,9 @@ import string
 from nltk.corpus import stopwords
 
 # 如果是首次使用，需要额外下载 stopwords 和 punkt：
-# nltk.download('punkt')
-# nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('punkt_tab')
 
 stop_words = set(stopwords.words('english'))
 
