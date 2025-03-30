@@ -64,6 +64,8 @@ tfidf_matrix_all = vectorizer.fit_transform(all_text)
 tfidf_matrix_rated = tfidf_matrix_all[:len(df_rated)]
 tfidf_matrix_unrated = tfidf_matrix_all[len(df_rated):]
 
+print(tfidf_matrix_rated)
+
 # 计算无评价评论 与 有评价评论 之间的相似度矩阵
 similarity_matrix = cosine_similarity(tfidf_matrix_unrated, tfidf_matrix_rated)
 
