@@ -89,4 +89,4 @@ df_unrated['helpfulness_index'] = matched_helpfulness_index
 df_updated = pd.concat([df_rated, df_unrated], ignore_index=True)
 
 # 按照原顺序排序（如果需要的话），或者直接保存
-df_updated.to_csv('amazon_reviews_with_helpfulness.csv', index=False)
+df_updated.to_csv('CommentRankExtension/data/amazon_reviews_with_helpfulness.csv', index=False)
