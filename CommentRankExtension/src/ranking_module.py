@@ -21,7 +21,7 @@ def rank_reviews(reviews):
     if words_model is None:
         words_model = load("word2vec-google-news-300")
     
-    file_path = "data.txt" 
+    file_path = "../data/data.txt" 
     constants = txt_to_constants(file_path)
     ranked = []
     

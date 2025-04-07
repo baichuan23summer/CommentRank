@@ -1,50 +1,23 @@
 {
     "manifest_version": 3,
-    "name": "CommentRank",
+    "name": "Amazon Review Ranker",
     "version": "1.0",
-    "description": "Ranks Amazon product reviews with an interactive sidebar.",
-    "permissions": [
-      "storage",
-      "activeTab",
-      "scripting",
-      "debugger"
-    ],
-    "host_permissions": [
-      "https://www.amazon.com/*"
-    ],
-    "background": {
-      "service_worker": "src/background.js"
-    },
-    "content_scripts": [
-        {
-            "matches": ["https://www.amazon.com/*"],
-            "js": ["src/content.js"],
-            "css": ["src/styles.css"]
-        }
-    ],
+    "description": "An extension to rank Amazon reviews based on quality.",
+    "permissions": ["storage"],
+    "host_permissions": ["https://www.amazon.com/*"],
     "action": {
+      "default_popup": "src/popup.html",
       "default_icon": {
         "16": "icons/icon16.png",
-        "24": "icons/icon24.png",
-        "32": "icons/icon32.png",
         "48": "icons/icon48.png",
         "128": "icons/icon128.png"
-      },
-      "default_title": "Toggle CommentRank Sidebar"
+      }
     },
-    "commands": {
-        "toggle_sidebar": {
-            "suggested_key": {
-                "default": "Alt+R"
-                },
-            "description": "Toggle CommentRank sidebar by keyboard shortcut Alt+R"
-            }
-    },
-    "web_accessible_resources": [
-        {
-        "resources": ["sidebar.html", "src/styles.css", "src/sidebar.js"],
-        "matches": ["https://www.amazon.com/*"]
-        }
+    "content_scripts": [
+      {
+        "matches": ["https://www.amazon.com/*"],
+        "css": ["src/styles.css"]
+      }
     ]
-}
+  }
   
