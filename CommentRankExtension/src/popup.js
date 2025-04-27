@@ -1,56 +1,83 @@
 // popup.js
 document.addEventListener('DOMContentLoaded', async () => {
-    const submitButton = document.getElementById('submitReview');
-    const reviewInput = document.getElementById('reviewInput');
     const rankedList = document.getElementById('rankedReviews');
-    const clearButton = document.getElementById('clearHistory');
+    const rankButton = document.getElementById('rankButton');
+    
+    rankButton.addEventListener('click', async () =>{
+        // Show loading state
+        rankedList.innerHTML = '<li>Loading product reviews...</li>';
 
-    // Load existing reviews from storage
-    let reviews = [];
-    const storedData = await chrome.storage.local.get('reviews');
-    if (storedData.reviews) reviews = storedData.reviews;
-
-    // Submit new review
-    submitButton.addEventListener('click', async () => {
-        const reviewText = reviewInput.value.trim();
-        if (!reviewText) {
-            alert('Please enter a review.');
-            return;
-        }
-
-        // Add to review history
-        reviews.push(reviewText);
-        await chrome.storage.local.set({ reviews });
-
-        // Send ALL reviews for ranking
         try {
-            const response = await fetch('http://localhost:5000/rank', {
+            // Get current tab URL
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            const url = new URL(tab.url);
+            
+            // Extract ASIN from Amazon URL
+            const asin = extractASIN(url.pathname);
+            if (!asin) {
+                rankedList.innerHTML = '<li>'+asin+'</li>';
+                return;
+            }
+
+            // Send ASIN to API
+            const response = await fetch('http://localhost:5000/get-reviews', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ reviews })
+                body: JSON.stringify({ asin })
             });
-            
-            if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             
             const data = await response.json();
-            rankedList.innerHTML = '';
-            data.forEach((item, index) => {
-                const li = document.createElement('li');
-                li.textContent = `${index + 1}. (Score: ${item.score.toFixed(2)}) ${item.review}`;
-                rankedList.appendChild(li);
-            });
+            renderResults(data);
 
-            reviewInput.value = ''; // Clear input field
         } catch (error) {
             console.error('Error:', error);
-            rankedList.innerHTML = '<li>Failed to rank reviews. Check API.</li>';
+            rankedList.innerHTML = '<li>Error fetching reviews. Please try again.</li>';
         }
     });
-
-    // Clear history
-    clearButton.addEventListener('click', async () => {
-        reviews = [];
-        await chrome.storage.local.remove('reviews');
-        rankedList.innerHTML = '<li>History cleared.</li>';
-    });
 });
+
+function extractASIN(path) {
+    // Match ASIN in common Amazon URL patterns
+    const asinRegex = /\/(?:dp|gp\/product)\/([A-Z0-9]{10})/;
+    const match = path.match(asinRegex);
+    return match ? match[1] : null;
+}
+
+function renderResults(data) {
+    const rankedList = document.getElementById('rankedReviews');
+    rankedList.innerHTML = ''; // Clear previous results
+
+    // Handle null/undefined data or empty response
+    if (!data?.test_reviews?.length) {
+        const message = !data ? 'Error fetching data' : 
+                       data.test_reviews ? 'No reviews found' : 'Invalid data format';
+        rankedList.innerHTML = `<li class="error">${message}</li>`;
+        return;
+    }
+
+    // Create document fragment for batch DOM insertion
+    const fragment = document.createDocumentFragment();
+    
+    // Using map + append instead of forEach for better performance
+    rankedList.append(...data.test_reviews.map((item, index) => {
+        const li = document.createElement('li');
+        
+        // Safely handle potential missing values
+        const score = item.score?.toFixed?.(2) ?? 'N/A';
+        const reviewText = item.review || 'No review text available';
+
+        li.innerHTML = `
+            <div class="review-item">
+                <span class="rank">${index + 1}.</span>
+                <span class="score">Score: ${score}</span>
+                <p class="review-text">${reviewText}</p>
+            </div>
+        `;
+        return li;
+    }));
+
+    // Optional: Add data attributes for debugging
+    rankedList.dataset.lastUpdated = new Date().toISOString();
+}
