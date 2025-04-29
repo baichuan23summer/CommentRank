@@ -31,5 +31,5 @@ def rank_reviews(reviews):
         ranked.append({'review': review, 'score': score})
     
     # Sort by score descending
-    ranked.sort(key=lambda x: x['score'], reverse=False)
+    ranked.sort(key=lambda x: x['score'])
     return ranked

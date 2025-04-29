@@ -7,13 +7,23 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2>Amazon Review Ranker</h2>
-    <textarea id="reviewInput" placeholder="Enter your review here..."></textarea>
-    <div class="button-group">
-        <button id="submitReview">Submit</button>
-        <button id="clearHistory">Clear History</button>
+    <div class="popup-container">
+        <header class="header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon Logo" class="logo">
+            <h1>Review Ranker</h1>
+        </header>
+
+        <!-- <textarea id="reviewInput" placeholder="Paste your review..."></textarea> -->
+
+        <div class="button-group">
+            <button id="refreshReviews">Refresh Reviews</button>
+            <button id="clearHistory" class="secondary-button">Clear History</button>
+        </div>
+
+        <h2 class="section-title">Ranked Reviews</h2>
+        <ul id="rankedReviews"></ul>
     </div>
-    <ul id="rankedReviews"></ul>
+
     <script src="popup.js"></script>
 </body>
 </html>

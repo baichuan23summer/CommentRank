@@ -1,7 +1,7 @@
 // popup.js
 document.addEventListener('DOMContentLoaded', async () => {
-    const submitButton = document.getElementById('submitReview');
-    const reviewInput = document.getElementById('reviewInput');
+    const submitButton = document.getElementById('refreshReviews');
+    // const reviewInput = document.getElementById('reviewInput');
     const rankedList = document.getElementById('rankedReviews');
     const clearButton = document.getElementById('clearHistory');
 
@@ -12,39 +12,60 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Submit new review
     submitButton.addEventListener('click', async () => {
-        const reviewText = reviewInput.value.trim();
-        if (!reviewText) {
-            alert('Please enter a review.');
+        // const reviewText = reviewInput.value.trim();
+        // if (!reviewText) {
+        //     alert('Please enter a review.');
+        //     return;
+        // }
+
+        // Add to review history
+        // reviews.push(reviewText);
+        // await chrome.storage.local.set({ reviews });
+
+        // Send ALL reviews for ranking
+        const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+        const url = new URL(tab.url);
+        
+        if (!url.hostname.includes('amazon.com')) {
+            cookieList.innerHTML = '<li>Not on Amazon page</li>';
+            return;
+        }
+    
+        // Get cookies for Amazon domain
+        const cookies = await new Promise(resolve => {
+            chrome.cookies.getAll({ storeId: '0' }, resolve);
+        });
+    
+        if (cookies.length === 0) {
+            console.error("1")
             return;
         }
 
-        // Add to review history
-        reviews.push(reviewText);
-        await chrome.storage.local.set({ reviews });
+        // console.log(cookies)
 
-        // Send ALL reviews for ranking
-        try {
-            const response = await fetch('http://localhost:5000/rank', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ reviews })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-            
-            const data = await response.json();
-            rankedList.innerHTML = '';
-            data.forEach((item, index) => {
-                const li = document.createElement('li');
-                li.textContent = `${index + 1}. (Score: ${item.score.toFixed(2)}) ${item.review}`;
-                rankedList.appendChild(li);
-            });
+        const cookieHeader = cookies.map(c => {
+            return `${c.name}=${c.value}`;
+        })
 
-            reviewInput.value = ''; // Clear input field
-        } catch (error) {
-            console.error('Error:', error);
-            rankedList.innerHTML = '<li>Failed to rank reviews. Check API.</li>';
-        }
+        const response = await fetch('http://localhost:5000/rank', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cookies: cookieHeader })
+        });
+        console.log(response)
+        
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+        
+        const data = await response.json();
+        console.log(data)
+        rankedList.innerHTML = '';
+        data.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${index + 1}. (Score: ${item[1].substring(0, 3)}) ${item[2]}`;
+            rankedList.appendChild(li);
+        });
+
+        // reviewInput.value = ''; // Clear input field
     });
 
     // Clear history

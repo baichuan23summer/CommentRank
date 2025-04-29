@@ -9,90 +9,91 @@ import cv2
 from io import BytesIO
 from PIL import Image
 import easyocr
+import browser_cookie3
 
 
-def auth(pack):
-    session, url = pack
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, "html.parser")
+# def auth(pack):
+#     session, url = pack
+#     response = requests.get(url)
+#     soup = BeautifulSoup(response.content, "html.parser")
 
-    headers = {
-        'User-Agent': 'Mozilla/5.0',
-        # Add cookies if needed
-    }
+#     headers = {
+#         'User-Agent': 'Mozilla/5.0',
+#         # Add cookies if needed
+#     }
 
-    def get_value(name):
-        tag = soup.find("input", {"name": name})
-        return tag["value"] if tag else ""
+#     def get_value(name):
+#         tag = soup.find("input", {"name": name})
+#         return tag["value"] if tag else ""
 
-    pwd = input("password: ")
-    payload = {
-        "email": get_value("email"),
-        "password": pwd,  # <-- Replace this securely
-        "appActionToken": get_value("appActionToken"),
-        "appAction": get_value("appAction"),
-        "workflowState": get_value("workflowState"),
-        "openid.return_to": get_value("openid.return_to"),
-        "prevRID": get_value("prevRID"),
-        "metadata1": get_value("metadata1"),
-        "aaToken": get_value("aaToken"),
-    }
+#     pwd = input("password: ")
+#     payload = {
+#         "email": get_value("email"),
+#         "password": pwd,  # <-- Replace this securely
+#         "appActionToken": get_value("appActionToken"),
+#         "appAction": get_value("appAction"),
+#         "workflowState": get_value("workflowState"),
+#         "openid.return_to": get_value("openid.return_to"),
+#         "prevRID": get_value("prevRID"),
+#         "metadata1": get_value("metadata1"),
+#         "aaToken": get_value("aaToken"),
+#     }
 
-    session.post("https://www.amazon.com/ap/signin", data=payload, headers=headers)
-    print("Status Code:", response.status_code)
-    print("Final URL:", response.url)
+#     session.post("https://www.amazon.com/ap/signin", data=payload, headers=headers)
+#     print("Status Code:", response.status_code)
+#     print("Final URL:", response.url)
 
 
-def submitCaptcha(session, pack):
-    html, text = pack
-    # session = requests.Session()
-    headers = {
-        'User-Agent': 'Mozilla/5.0',
-        # Add cookies if needed
-    }
+# def submitCaptcha(session, pack):
+#     html, text = pack
+#     # session = requests.Session()
+#     headers = {
+#         'User-Agent': 'Mozilla/5.0',
+#         # Add cookies if needed
+#     }
 
-    soup = BeautifulSoup(html, "html.parser")
-    amzn = soup.find('input', {'name': 'amzn'})['value']
-    amzn_r = soup.find('input', {'name': 'amzn-r'})['value']
+#     soup = BeautifulSoup(html, "html.parser")
+#     amzn = soup.find('input', {'name': 'amzn'})['value']
+#     amzn_r = soup.find('input', {'name': 'amzn-r'})['value']
 
-    payload = {
-        'amzn': amzn,
-        'amzn-r': amzn_r,
-        'field-keywords': text
-    }
+#     payload = {
+#         'amzn': amzn,
+#         'amzn-r': amzn_r,
+#         'field-keywords': text
+#     }
 
-    response = session.get('https://www.amazon.com/errors/validateCaptcha', params=payload, headers=headers)
+#     response = session.get('https://www.amazon.com/errors/validateCaptcha', params=payload, headers=headers)
     
-    # Step 6: Check result
-    print("Final URL:", response.url)
-    print("Status:", response.status_code)
-    return response.url
+#     # Step 6: Check result
+#     print("Final URL:", response.url)
+#     print("Status:", response.status_code)
+#     return response.url
 
 
-def fetchRecaptcha(response):
-    html = response.content.decode('utf-8')
-    match = re.search(r'< img src="(https://images-na\.ssl-images-amazon\.com/captcha/[^"]+)"', html)
+# def fetchRecaptcha(response):
+#     html = response.content.decode('utf-8')
+#     match = re.search(r'< img src="(https://images-na\.ssl-images-amazon\.com/captcha/[^"]+)"', html)
 
-    if match:
-        captcha_url = match.group(1)
-        print("CAPTCHA URL:", captcha_url)
-        return html, captcha_url
-    else:
-        print("CAPTCHA not found")
-        return html, None
+#     if match:
+#         captcha_url = match.group(1)
+#         print("CAPTCHA URL:", captcha_url)
+#         return html, captcha_url
+#     else:
+#         print("CAPTCHA not found")
+#         return html, None
     
-def recaptchaHandler(pack):
-    html, url = pack
-    resp = requests.get(url)
-    img = Image.open(BytesIO(resp.content)).convert('RGB')
-    img_np = np.array(img)
+# def recaptchaHandler(pack):
+#     html, url = pack
+#     resp = requests.get(url)
+#     img = Image.open(BytesIO(resp.content)).convert('RGB')
+#     img_np = np.array(img)
 
-    reader = easyocr.Reader(['en'])
-    results = reader.readtext(img_np)
+#     reader = easyocr.Reader(['en'])
+#     results = reader.readtext(img_np)
     
-    for (bbox, text, prob) in results:
-        print(f'Text: {text}, Confidence: {prob}')
-    return html, text
+#     for (bbox, text, prob) in results:
+#         print(f'Text: {text}, Confidence: {prob}')
+#     return html, text
 
 
 # def fetch_reviews(asin, page=1):
@@ -144,25 +145,26 @@ def fetch_reviews(asin, page=1):
     
     session = requests.Session()
     session.cookies.update({
-        "ad-id":            "A7iT1bGYIkVju8MA20oXv7I",
-        "ad-privacy":       "0",
-        # "am-token":         "",
-        "at-main":          "Atza|IwEBIP_KA6ngHTT4KYT0SALMjBvUCtkOmD5qgJcnWqL4j-cOzo-vb4GTAFK381Wq-gqGLUzsN79qfXhGJdxf2UNeonoYJdDvYfeH6tmGkS3WEBx1GywrMuPPphjD5zlKQqG0ySYzQIsAA7b7vy9uaAYcl3do137lqJep8PJoeVw36bNpGcwxijPRYp79QP4aOe23jU74Hby5oXZEAs2t7AWGdFdEgrsQJRfq31k7aFH-XY2-yM5DbWim4ef0zbxjfy4eSEk",
-        # "csd-key":          "",
-        "csm-hit":          "tb:YKYVDEHPDCH7XA3KFJ44+s-9P57JXC2HRVG73EY36ZA|1743368196325&t:1743368196325&adb:adblk_no",
+        # "ad-id":            "A7iT1bGYIkVju8MA20oXv7I",
+        # "ad-privacy":       "0",
+        # "am-token":         "eyJkZXZpY2VJZCI6IjEzMzM5MjMyMTY2MTkwODMyIiwiaGFzQXV0aGVudGljYXRlZCI6dHJ1ZSwicHJvZmlsZUlkIjoiIiwiZ3Vlc3RUb2tlbiI6bnVsbCwiZ3Vlc3RVYmlkIjpudWxsLCJndWVzdENvbnRleHQiOm51bGwsImhhc0NvbXBsZXRlZERhdGFUcmFuc2ZlciI6ZmFsc2V9",
+        "at-main":          "Atza|IwEBIMMIXpO6zyIHhGliLkKM6S4MKyTxtnB9HrpbI4N7gzzy1VkZGODId-zgLL6bVdykqz7bEWYCl7i-_cwOV5T-a8JeQW7-Xnf0MiKYJcWldIqDTIK-5qEJ7tuMc6Ew2zcTIEHDlQR7Jh3OTbMopl0JGM0YWCJ2FYTc6ua2X2TrIoMYVJCneqGYkWQamvnLg_fVVllJXQolrK8ZsO6p0TY1tJhCrftdVt_pSeeuma70LtNsFg",
+        # "csd-key":          "eyJ3YXNtVGVzdGVkIjp0cnVlLCJ3YXNtQ29tcGF0aWJsZSI6dHJ1ZSwid2ViQ3J5cHRvVGVzdGVkIjpmYWxzZSwidiI6MSwia2lkIjoiYWNhODY0Iiwia2V5IjoiTVF4QVFuK25KS25GV2JIc01zT2QrTU83bXRMS1ozb2hweVF3dnNPbDZTY2NGV3JJa1J5RUlhN3hIdzYzd0ZOaFR5OU01UWJXNDA0VW1TbU50SXhraVFrc20wb3JRVFpnT0Z1RXV0NkUrS0kxY1dGcmFNVnBVZGF0YUkyb2xDWUJxNWdTZTZlNHErYVBmanJ6NW9WcXBiZmhtTGdRRXNmcW5ncXBvWFFJcVVHS3YxZGZwVS9zQlhnQXVCMVlXSnBNTlZiQ3V2VjZEbUhWUkZLaUtvQWpHOStscmtKUldYSnZNY0FEbzlLSEF0ajFpS2ZLcHdjTXBMbGxsVFVodVdBNVo5dEoxWmlNVzd0T1pTRkNKUFh2TlN4S0ZHUnNndHJvb25wamE2dENtcDVkbW9tT1FabXJpbVRjM3c1TGxuUHF0Y0p6U2wwc202SkwwTnZUaDI0eEpBPT0ifQ==",
+        "csm-hit":          "tb:KTRCEGXACW70GFX1Q79D+s-BF56MYDD7HKGCQ7BCVJP|1745794593730&t:1745794593730&adb:adblk_yes",
         # "csm-sid":          "",
         "i18n-prefs":       "USD",
+        "id_pk":            "eyJuIjoiMSIsImFmIjoiMSJ9",
+        "id_pkel":          "n1",
         "lc-main":          "en_US",
-        "sess-at-main":     "\"b2w8C64QXi0802QdBXiL5DTAsl3dfBs7bqOETE4PCBA=\"",
-        "session-id":       "133-7155148-5289116",
+        "rxc": "AKcIs7DDgQpbOuBeOdI",
+        "sess-at-main":     "\"OJwSjQFpjfw7oWpBhZIl9D5i1Vv+FjSvpfqETeQmsOQ=\"",
+        "session-id":       "138-1032512-3474622",
+        # "session-id-apay":  "134-6628320-8847659",
         "session-id-time":  "2082787201l",
-        "session-token":    "oxzfMdkwSGCLfH9nCyxCg2GJJl7DgxtO3eCr8RtB++7nrfoXBHA5pwk40IarKco6J95kWV9XZ72nWhhHuNMr1kgUnXokiWJnwmYz2IPGZda8q31k3Dqtq+t8mjbI3klYHWdpuaK2w+aqBpc4W6WMk/RjnmrdLsPR7HXlzHGG9Z6H3emB1OJ+91X+/qSjiQM4oUU36HZsAa03ECagBClLogdyIIdXf0CGWU3dSA247SfLyt7RGR3mg0f3T91W67zSrAJ//LVIXPqjJoiuBc4f1aPDMNuZvVh7GWCGEjzLFmi0knoEOJB70kHPH+ERJy6bhnn3Fpt7YD4MZx+VG51nx57EclsZ3llWb5vE3cDF1Vmiv9jpBu8pBsqrtIMTsxRJ",
-        "skin":             "noskin",  
-        "sst-main":         "Sst1|PQHVwDUuAIJqYLjamVXMRa-zCcJD9_9e_1Zn6pfFIT-8LDmG_PwJPHxJRaL_6L02M3aa2zEJmXvq5NCLPMe4pqsEtHlDJgtKNmo78PVOIFvrIyyWEZxWnWTPbbjQv8v70P2Q7S5fAQ-_MSAe1YtMRRV5F_czsDpEyuvwxq_ebs_wRoCEA74mcH9G7sqkpTdzag48FA5mNE43ZIxhW_-R4Ry4szdVgdKgD23rAlQ9Gd_VJyCcPa1BUio1s2azxKlEE2yjukAWZlS-gYpZBo9nPfZRRoSmtmuYoIUo_XsuBjbgSPI",
-        "ubid-main":        "132-8679684-1200428",
-        "x-amz-captcha-1":  "1741325986593754",
-        "x-amz-captcha-2":  "nI6b/6S9DPqGnM+Su9DUjg==",
-        "x-main":           "\"kqRY3uh8@5DEEhsvDMDUS418XOghXTP@duR55CtZS9gvK88zNOeKBr7B6Gb3?wTy\"",
+        "session-token":    "\"S5LDXXj0Cfj0wGfNQNL+h27iJyRJ+J+9XAIg9bsQMGNh2rj2/x3m/hC80btgHWoEcgndc3WDMocOY9xAoLGBiaFcx3W2vCy2hwqmdszCU5qcnpCLStmdqQkp6Z1zgUnF4CyQJpzpoGq2NrZdWP6dHiQl/TRubcKoXKrUSf4XSmC5bbo9sId8fMe60uAku9UMQrkaHrgadrU0bwgT4z7SJRQFYJDHRwQeEaFjB07AgqpQ7a2yKOnDD8DspAKlJ+Tc+gvrNwseJier0ddTHlYvTy81m38CbF3Fenwmma+zgSpjkBX49YiMqNIp/ifB14eG/qirmgzfG7Mf7tRzd7BHJOc52bGRF714NR3jrlbByKsJukbtiKYc2Q==\"",
+        "sst-main":         "Sst1|PQG_jhe1r5ZrYKtkke2zN2EUCS-QaJpVlHpiBQ0nilTuI884953XUaJKsi9vo71sx1YMdrPmkwPJjszlT6_9A6BImRPLnX3IB_my1tLJuh888N2mTQNSnOCzTdH09GRuPtPsao3Zq49R4FkxbuYLb2QDxjTdTq6lIChdvFl56WiSo66LhiKh_QIi8hAy4oVRPbakv-bF5WOP3DwjKhTE9yax3_4xzaPLR0Tqd8RaIfj6LuD8aAyIyEjSXJV6qPrPoQMjpsfmEfFI_OXjJs-3fV6M0cAAZclODHqVRmrQCnRh7TU",
+        "ubid-main":        "132-8078235-1765222",
+        "x-main":           "\"9eF@yR9sMtAK1CbSbMg3xAj?JjsJs8gohby1LNLN8Tb6chpOVJ@qXm2s@HTZJYPa\"",
         
     })
     headers = {
@@ -185,18 +187,18 @@ def fetch_reviews(asin, page=1):
         return []
 
     # Step 2: Check if CAPTCHA page is shown
-    if "captcha" in response.text.lower():
-        print("[Info] CAPTCHA detected, trying to solve...")
+    # if "captcha" in response.text.lower():
+    #     print("[Info] CAPTCHA detected, trying to solve...")
 
-        # Step 3: Solve CAPTCHA
-        # Assume fetchRecaptcha, recaptchaHandler, submitCaptcha are implemented
-        recaptcha_image = fetchRecaptcha(response)
-        ocr_result = recaptchaHandler(recaptcha_image)
-        authUrl = submitCaptcha(session, ocr_result)
+    #     # Step 3: Solve CAPTCHA
+    #     # Assume fetchRecaptcha, recaptchaHandler, submitCaptcha are implemented
+    #     recaptcha_image = fetchRecaptcha(response)
+    #     ocr_result = recaptchaHandler(recaptcha_image)
+    #     authUrl = submitCaptcha(session, ocr_result)
 
-        # Step 4: Visit the auth URL (with same session)
-        print("final url:", authUrl)
-        response = session.get(authUrl)
+    #     # Step 4: Visit the auth URL (with same session)
+    #     print("final url:", authUrl)
+    #     response = session.get(authUrl)
     
     # Step 5: Parse reviews
     soup = BeautifulSoup(response.text, "html.parser")
@@ -222,7 +224,7 @@ def fetch_reviews(asin, page=1):
 
 
 def main():
-    asin = "B0D326XTTP"  # 替换为目标产品的 ASIN
+    asin = "B00B42NQC2"  # 替换为目标产品的 ASIN
 
     all_reviews = []
     current_page = 1
@@ -242,8 +244,8 @@ def main():
     if all_reviews:
         df = pd.DataFrame(all_reviews)
         # 保存为 Excel 文件，需要安装 openpyxl 或 xlsxwriter（pip install openpyxl）
-        df.to_excel("amazon_reviews.xlsx", index=False)
-        print("评论已保存到 amazon_reviews.xlsx")
+        df.to_csv("amazon_reviews.csv", index=False)
+        print("评论已保存到 amazon_reviews.csv")
     else:
         print("未抓取到任何评论数据。")
 
