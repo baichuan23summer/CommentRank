@@ -3,8 +3,8 @@
     "name": "Amazon Review Ranker",
     "version": "1.0",
     "description": "An extension to rank Amazon reviews based on quality.",
-    "permissions": ["storage"],
-    "host_permissions": ["https://www.amazon.com/*"],
+    "permissions": ["storage","cookies"],
+    "host_permissions": ["https://*.amazon.com/*","http://*.amazon.com/*"],
     "action": {
       "default_popup": "src/popup.html",
       "default_icon": {
@@ -15,7 +15,7 @@
     },
     "content_scripts": [
       {
-        "matches": ["https://www.amazon.com/*"],
+        "matches": ["https://*.amazon.com/*","http://*.amazon.com/*"],
         "css": ["src/styles.css"]
       }
     ]

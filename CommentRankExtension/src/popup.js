@@ -19,12 +19,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 rankedList.innerHTML = '<li>'+asin+'</li>';
                 return;
             }
+            
+            // Extract cookies
+            const cookies = await new Promise(resolve => {
+                chrome.cookies.getAll({ storeId: '0' }, resolve);
+            });
+
+            if (cookies.length === 0) {
+                console.error("1")
+                return;
+            }
+            console.log(asin, "\n", cookies)
+
+            const cookieHeader = cookies.map(c => {
+
+                return `${c.name}=${c.value}`;
+
+            })
 
             // Send ASIN to API
             const response = await fetch('http://localhost:5000/get-reviews', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ asin })
+                body: JSON.stringify({ asin, cookieHeader })
             });
 
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
