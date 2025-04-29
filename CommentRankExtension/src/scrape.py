@@ -139,32 +139,33 @@ def recaptchaHandler(pack):
 #         })
 #     return reviews
 
-def fetch_reviews(asin, page=1):
+def fetch_reviews(asin, cookies, page=1):
     url = f"https://www.amazon.com/product-reviews/{asin}/?pageNumber={page}"
     
     session = requests.Session()
-    session.cookies.update({
-        "ad-id":            "A7iT1bGYIkVju8MA20oXv7I",
-        "ad-privacy":       "0",
-        # "am-token":         "",
-        "at-main":          "Atza|IwEBIP_KA6ngHTT4KYT0SALMjBvUCtkOmD5qgJcnWqL4j-cOzo-vb4GTAFK381Wq-gqGLUzsN79qfXhGJdxf2UNeonoYJdDvYfeH6tmGkS3WEBx1GywrMuPPphjD5zlKQqG0ySYzQIsAA7b7vy9uaAYcl3do137lqJep8PJoeVw36bNpGcwxijPRYp79QP4aOe23jU74Hby5oXZEAs2t7AWGdFdEgrsQJRfq31k7aFH-XY2-yM5DbWim4ef0zbxjfy4eSEk",
-        # "csd-key":          "",
-        "csm-hit":          "tb:YKYVDEHPDCH7XA3KFJ44+s-9P57JXC2HRVG73EY36ZA|1743368196325&t:1743368196325&adb:adblk_no",
-        # "csm-sid":          "",
-        "i18n-prefs":       "USD",
-        "lc-main":          "en_US",
-        "sess-at-main":     "\"b2w8C64QXi0802QdBXiL5DTAsl3dfBs7bqOETE4PCBA=\"",
-        "session-id":       "133-7155148-5289116",
-        "session-id-time":  "2082787201l",
-        "session-token":    "oxzfMdkwSGCLfH9nCyxCg2GJJl7DgxtO3eCr8RtB++7nrfoXBHA5pwk40IarKco6J95kWV9XZ72nWhhHuNMr1kgUnXokiWJnwmYz2IPGZda8q31k3Dqtq+t8mjbI3klYHWdpuaK2w+aqBpc4W6WMk/RjnmrdLsPR7HXlzHGG9Z6H3emB1OJ+91X+/qSjiQM4oUU36HZsAa03ECagBClLogdyIIdXf0CGWU3dSA247SfLyt7RGR3mg0f3T91W67zSrAJ//LVIXPqjJoiuBc4f1aPDMNuZvVh7GWCGEjzLFmi0knoEOJB70kHPH+ERJy6bhnn3Fpt7YD4MZx+VG51nx57EclsZ3llWb5vE3cDF1Vmiv9jpBu8pBsqrtIMTsxRJ",
-        "skin":             "noskin",  
-        "sst-main":         "Sst1|PQHVwDUuAIJqYLjamVXMRa-zCcJD9_9e_1Zn6pfFIT-8LDmG_PwJPHxJRaL_6L02M3aa2zEJmXvq5NCLPMe4pqsEtHlDJgtKNmo78PVOIFvrIyyWEZxWnWTPbbjQv8v70P2Q7S5fAQ-_MSAe1YtMRRV5F_czsDpEyuvwxq_ebs_wRoCEA74mcH9G7sqkpTdzag48FA5mNE43ZIxhW_-R4Ry4szdVgdKgD23rAlQ9Gd_VJyCcPa1BUio1s2azxKlEE2yjukAWZlS-gYpZBo9nPfZRRoSmtmuYoIUo_XsuBjbgSPI",
-        "ubid-main":        "132-8679684-1200428",
-        "x-amz-captcha-1":  "1741325986593754",
-        "x-amz-captcha-2":  "nI6b/6S9DPqGnM+Su9DUjg==",
-        "x-main":           "\"kqRY3uh8@5DEEhsvDMDUS418XOghXTP@duR55CtZS9gvK88zNOeKBr7B6Gb3?wTy\"",
-        
-    })
+    session.cookies.update(cookies)
+    # session.cookies.update({
+    #     "ad-id":            "A7iT1bGYIkVju8MA20oXv7I",
+    #     "ad-privacy":       "0",
+    #     # "am-token":         "",
+    #     "at-main":          "Atza|IwEBIP_KA6ngHTT4KYT0SALMjBvUCtkOmD5qgJcnWqL4j-cOzo-vb4GTAFK381Wq-gqGLUzsN79qfXhGJdxf2UNeonoYJdDvYfeH6tmGkS3WEBx1GywrMuPPphjD5zlKQqG0ySYzQIsAA7b7vy9uaAYcl3do137lqJep8PJoeVw36bNpGcwxijPRYp79QP4aOe23jU74Hby5oXZEAs2t7AWGdFdEgrsQJRfq31k7aFH-XY2-yM5DbWim4ef0zbxjfy4eSEk",
+    #     # "csd-key":          "",
+    #     "csm-hit":          "tb:YKYVDEHPDCH7XA3KFJ44+s-9P57JXC2HRVG73EY36ZA|1743368196325&t:1743368196325&adb:adblk_no",
+    #     # "csm-sid":          "",
+    #     "i18n-prefs":       "USD",
+    #     "lc-main":          "en_US",
+    #     "sess-at-main":     "\"b2w8C64QXi0802QdBXiL5DTAsl3dfBs7bqOETE4PCBA=\"",
+    #     "session-id":       "133-7155148-5289116",
+    #     "session-id-time":  "2082787201l",
+    #     "session-token":    "oxzfMdkwSGCLfH9nCyxCg2GJJl7DgxtO3eCr8RtB++7nrfoXBHA5pwk40IarKco6J95kWV9XZ72nWhhHuNMr1kgUnXokiWJnwmYz2IPGZda8q31k3Dqtq+t8mjbI3klYHWdpuaK2w+aqBpc4W6WMk/RjnmrdLsPR7HXlzHGG9Z6H3emB1OJ+91X+/qSjiQM4oUU36HZsAa03ECagBClLogdyIIdXf0CGWU3dSA247SfLyt7RGR3mg0f3T91W67zSrAJ//LVIXPqjJoiuBc4f1aPDMNuZvVh7GWCGEjzLFmi0knoEOJB70kHPH+ERJy6bhnn3Fpt7YD4MZx+VG51nx57EclsZ3llWb5vE3cDF1Vmiv9jpBu8pBsqrtIMTsxRJ",
+    #     "skin":             "noskin",  
+    #     "sst-main":         "Sst1|PQHVwDUuAIJqYLjamVXMRa-zCcJD9_9e_1Zn6pfFIT-8LDmG_PwJPHxJRaL_6L02M3aa2zEJmXvq5NCLPMe4pqsEtHlDJgtKNmo78PVOIFvrIyyWEZxWnWTPbbjQv8v70P2Q7S5fAQ-_MSAe1YtMRRV5F_czsDpEyuvwxq_ebs_wRoCEA74mcH9G7sqkpTdzag48FA5mNE43ZIxhW_-R4Ry4szdVgdKgD23rAlQ9Gd_VJyCcPa1BUio1s2azxKlEE2yjukAWZlS-gYpZBo9nPfZRRoSmtmuYoIUo_XsuBjbgSPI",
+    #     "ubid-main":        "132-8679684-1200428",
+    #     "x-amz-captcha-1":  "1741325986593754",
+    #     "x-amz-captcha-2":  "nI6b/6S9DPqGnM+Su9DUjg==",
+    #     "x-main":           "\"kqRY3uh8@5DEEhsvDMDUS418XOghXTP@duR55CtZS9gvK88zNOeKBr7B6Gb3?wTy\"",
+    # })
+
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                     "AppleWebKit/537.36 (KHTML, like Gecko) "
