@@ -214,9 +214,9 @@ def fetch_reviews(asin, cookies, page=1):
         body = body_tag.get_text(strip=True) if body_tag else ""
 
         reviews.append({
-            "标题": title,
-            "评分": rating,
-            "评论内容": body
+            "title": title,
+            "rating": rating,
+            "comment": body
         })
 
     return reviews
@@ -228,10 +228,10 @@ def main():
     all_reviews = []
     current_page = 1
     while True:
-        print(f"正在抓取第 {current_page} 页评论...")
+        print(f"Now scraping reveiws on Page {current_page} ...")
         reviews = fetch_reviews(asin, current_page)
         if not reviews:
-            print("没有更多评论或发生错误。")
+            print("No review on the current page or error.")
             break
 
         all_reviews.extend(reviews)
@@ -244,9 +244,9 @@ def main():
         df = pd.DataFrame(all_reviews)
         # 保存为 Excel 文件，需要安装 openpyxl 或 xlsxwriter（pip install openpyxl）
         df.to_excel("amazon_reviews.xlsx", index=False)
-        print("评论已保存到 amazon_reviews.xlsx")
+        print("Reviews saved in amazon_reviews.xlsx")
     else:
-        print("未抓取到任何评论数据。")
+        print("Did not acquire any comment during this scraping process.")
 
 
 if __name__ == "__main__":

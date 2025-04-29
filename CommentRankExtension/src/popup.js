@@ -71,23 +71,15 @@ function renderResults(data) {
     const rankedList = document.getElementById('rankedReviews');
     rankedList.innerHTML = ''; // Clear previous results
 
-    // Handle null/undefined data or empty response
-    if (!data?.test_reviews?.length) {
-        const message = !data ? 'Error fetching data' : 
-                       data.test_reviews ? 'No reviews found' : 'Invalid data format';
-        rankedList.innerHTML = `<li class="error">${message}</li>`;
-        return;
-    }
-
     // Create document fragment for batch DOM insertion
     const fragment = document.createDocumentFragment();
     
     // Using map + append instead of forEach for better performance
-    rankedList.append(...data.test_reviews.map((item, index) => {
+    rankedList.append(...data.reviews.map((item, index) => {
         const li = document.createElement('li');
         
         // Safely handle potential missing values
-        const score = item.score?.toFixed?.(2) ?? 'N/A';
+        const score = item.score || 'N/A';
         const reviewText = item.review || 'No review text available';
 
         li.innerHTML = `

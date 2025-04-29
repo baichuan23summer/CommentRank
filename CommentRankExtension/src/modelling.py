@@ -47,7 +47,7 @@ def train_model():
 
 def predict_helpfulness(new_review):
     # 加载模型
-    model = joblib.load("helpfulness_xgb_model.pkl")
+    model = joblib.load("../data/helpfulness_xgb_model.pkl")
     # 1. 用 BERT 生成特征向量
     feature_vector = get_bert_embedding(new_review).reshape(1, -1)  # (1, 768)
 

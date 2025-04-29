@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import scrape
-# import forecasting
+import modelling
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for cross-origin requests from the extension
@@ -22,15 +22,22 @@ def handle_reviews_request():
 
         reviewsJSON = scrape.fetch_reviews(received_asin, cookies)
         # print(reviewsJSON)
+
+        if not reviewsJSON: 
+            reviewsJSON = [{"标题":"something", "评论内容": "this is not an bad idea", "评分": 5.0 },
+                           {"标题":"something", "评论内容": "this is not an good idea", "评分": 5.0 },
+                           {"标题":"something", "评论内容": "hope you have a wonderfulday", "评分": 5.0 }]
         
         body = []
         for review in reviewsJSON:
+            content = review.get("评论内容")
             properties = {
-                "review": review["评论内容"],
-                # "score" : forecasting.predict_helpfulness(review["评论内容"])
+                "review": content,
+                "score": modelling.predict_helpfulness(content)
             }
             body.append(properties)
         sorted_body = sort_reviews_by_score(body)
+        # print(sorted_body)
 
         return (jsonify({
             "message":"Ranked successfully!",
@@ -38,6 +45,7 @@ def handle_reviews_request():
         }),200)
 
     except Exception as e:
+        print(e)
         return jsonify({
             "error": str(e),
             "message": "Error processing request"
