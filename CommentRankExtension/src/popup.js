@@ -1,9 +1,10 @@
 // popup.js
 document.addEventListener('DOMContentLoaded', async () => {
+    const submitButton = document.getElementById('refreshReviews');
     const rankedList = document.getElementById('rankedReviews');
-    const rankButton = document.getElementById('rankButton');
+    const clearButton = document.getElementById('clearHistory');
     
-    rankButton.addEventListener('click', async () =>{
+    submitButton.addEventListener('click', async () =>{
         // Show loading state
         rankedList.innerHTML = '<li>Loading product reviews...</li>';
 
@@ -35,6 +36,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error:', error);
             rankedList.innerHTML = '<li>Error fetching reviews. Please try again.</li>';
         }
+    });
+
+    clearButton.addEventListener('click', async () => {
+        rankedList.innerHTML = '<li>History cleared.</li>';
     });
 });
 
