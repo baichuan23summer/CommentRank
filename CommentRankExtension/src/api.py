@@ -11,7 +11,15 @@ def handle_reviews_request():
     try:
         data = request.get_json()
         received_asin = data.get('asin', 'No ASIN received')
-        
+
+        cookies = {}
+        ckies = request.get_json().get("cookies")
+        for i in cookies:
+            name = i[0:str(i).find("=")]
+            value = i[str(i).find("=")+1:]
+            ckies[name] = value
+        print(ckies) 
+
         reviewsJSON = scrape.fetch_reviews(received_asin)
         body = []
         for review in reviewsJSON:
