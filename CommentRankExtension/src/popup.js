@@ -71,7 +71,6 @@ function renderResults(data) {
     const rankedList = document.getElementById('rankedReviews');
     rankedList.innerHTML = ''; // Clear previous results
 
-    // Create document fragment for batch DOM insertion
     const fragment = document.createDocumentFragment();
     
     // Using map + append instead of forEach for better performance
@@ -92,6 +91,5 @@ function renderResults(data) {
         return li;
     }));
 
-    // Optional: Add data attributes for debugging
     rankedList.dataset.lastUpdated = new Date().toISOString();
 }

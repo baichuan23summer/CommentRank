@@ -223,7 +223,7 @@ def fetch_reviews(asin, cookies, page=1):
 
 
 def main():
-    asin = "B0D326XTTP"  # 替换为目标产品的 ASIN
+    asin = "B0D326XTTP"  # product's ASIN
 
     all_reviews = []
     current_page = 1
@@ -236,13 +236,10 @@ def main():
 
         all_reviews.extend(reviews)
         current_page += 1
-        # 随机延时 2~5 秒，防止请求过快
         time.sleep(random.uniform(2, 5))
 
-    # 将抓取到的数据存储到 Excel 文件中
     if all_reviews:
         df = pd.DataFrame(all_reviews)
-        # 保存为 Excel 文件，需要安装 openpyxl 或 xlsxwriter（pip install openpyxl）
         df.to_excel("amazon_reviews.xlsx", index=False)
         print("Reviews saved in amazon_reviews.xlsx")
     else:

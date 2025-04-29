@@ -4,15 +4,16 @@ import scrape
 import modelling
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for cross-origin requests from the extension
+CORS(app)
 
 @app.route('/get-reviews', methods=['POST'])
 def handle_reviews_request():
     try:
+        # Acquire asin and cookies from the POST
         data = request.get_json()
         received_asin = data.get('asin', 'No ASIN received')
-
         cookies = {}
+        # parse cookies
         ckies = request.get_json().get("cookieHeader")
         for i in ckies:
             name = i[0:str(i).find("=")]
@@ -20,17 +21,19 @@ def handle_reviews_request():
             cookies[name] = value
         # print(cookies) 
 
+        # scrape reviews using user's cookies on current product page
         reviewsJSON = scrape.fetch_reviews(received_asin, cookies)
         # print(reviewsJSON)
 
         if not reviewsJSON: 
-            reviewsJSON = [{"标题":"something", "评论内容": "this is not an bad idea", "评分": 5.0 },
-                           {"标题":"something", "评论内容": "this is not an good idea", "评分": 5.0 },
-                           {"标题":"something", "评论内容": "hope you have a wonderfulday", "评分": 5.0 }]
+            reviewsJSON = [{"title":"something", "comment": "this is not an bad idea", "rating": 5.0 },
+                           {"title":"something", "comment": "this is not an good idea", "rating": 5.0 },
+                           {"title":"something", "comment": "hope you have a wonderfulday", "rating": 5.0 }]
         
+        # rank 
         body = []
         for review in reviewsJSON:
-            content = review.get("评论内容")
+            content = review.get("comment")
             properties = {
                 "review": content,
                 "score": modelling.predict_helpfulness(content)
